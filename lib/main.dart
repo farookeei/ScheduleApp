@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:scheduleapp/core/bloc/savapi/saveapi_bloc.dart';
-import 'package:scheduleapp/core/bloc/schedule_bloc.dart';
+
 import 'package:scheduleapp/screens/scheduleScreen/scheduleScreen.dart';
 
+import 'core/bloc/FetchBloc/schedule_bloc.dart';
+import 'core/bloc/SaveBloc/saveapi_bloc.dart';
 import 'core/services/dependecyInjection.dart';
 import 'core/themes/themes.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

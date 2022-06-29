@@ -35,7 +35,9 @@ class ScheduleOverlap extends StatelessWidget {
           const SizedBox(height: 15),
           CustomBtn(
             title: "Okay",
-            onpressed: () {},
+            onpressed: () {
+              Navigator.pop(context);
+            },
           )
         ],
       ),

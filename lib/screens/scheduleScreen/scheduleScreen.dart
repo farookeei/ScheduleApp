@@ -4,11 +4,11 @@ import 'dart:developer';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
-import 'package:scheduleapp/core/bloc/schedule_bloc.dart';
 import 'package:scheduleapp/core/themes/colors.dart';
 import 'package:scheduleapp/core/values/days.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../core/bloc/FetchBloc/schedule_bloc.dart';
 import '../../core/services/dependecyInjection.dart';
 
 import '../bottomsheet/bottomsheet.dart';
@@ -42,6 +42,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       count++;
     }
     super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -152,14 +157,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                         },
                         shrinkWrap: true,
                       );
-                      //  }
-                      // return ListView.builder(
-                      //   itemCount: 3,
-                      //   itemBuilder: (ctx, i) {
-                      //     return PerdayScheduleListIem();
-                      //   },
-                      //   shrinkWrap: true,
-                      // );
                     },
                   )),
             ],

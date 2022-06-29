@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:scheduleapp/core/error/http_exception.dart';
 import 'package:scheduleapp/core/model/scheduleModel.dart';
 import 'package:scheduleapp/core/services/dependecyInjection.dart';
 import 'dart:convert';
@@ -31,15 +30,6 @@ class ScheduleApi {
   static Future<void> createSchedules(
       String name, String date, String starttime, String endtime) async {
     try {
-      // final _fetchData = _dioAPIServices.postAPI(
-      //     url: "https://alpha.classaccess.io/api/challenge/v1/save/schedule",
-      //     body: {
-      //       "name": name,
-      //       "startTime": starttime,
-      //       "endTime": endtime,
-      //       "date": date
-      //     });
-
       Map<String, dynamic> _body = {
         "name": name,
         "startTime": starttime,
@@ -53,8 +43,6 @@ class ScheduleApi {
               data: _encodeJson)
           .catchError((e) => throw e);
     } catch (e) {
-      // ignore: avoid_print
-      // print(e);
       log("error occured");
       // ignore: use_rethrow_when_possible
       throw e;

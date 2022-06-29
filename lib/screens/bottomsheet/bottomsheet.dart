@@ -1,14 +1,16 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:scheduleapp/screens/bottomsheet/widgets/dateandTime.dart';
 import 'package:scheduleapp/screens/bottomsheet/widgets/scheduleOverlap.dart';
 import 'package:scheduleapp/widgets/customBtn.dart';
 import 'package:date_format/date_format.dart';
-import '../../core/bloc/savapi/saveapi_bloc.dart';
-import '../../core/bloc/schedule_bloc.dart';
+import '../../core/bloc/FetchBloc/schedule_bloc.dart';
+import '../../core/bloc/SaveBloc/saveapi_bloc.dart';
+
 import '../../core/services/dependecyInjection.dart';
 import '../../core/themes/colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../widgets/customDivider.dart';
 
 ColorSchemes _colors = locator<ColorSchemes>();
 
@@ -40,8 +42,10 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
         });
   }
 
-  // ignore: unused_field
-  // final Map _data = {'name': '', 'startTime': finalStartTime, "endTime": finalEndTime, "date": ""};
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -62,18 +66,13 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
         "${_starttime.hour.toString()}:${_starttime.minute.toString()}:00";
     finalEndTime =
         "${_endTime.hour.toString()}:${_endTime.minute.toString()}:00";
-    log(finalEndTime.toString());
-    log(finalStartTime.toString());
   }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      // initialDate: DateTime.now().add(const Duration(days: 1)),
-      // firstDate: DateTime.now().add(const Duration(days: 1)),
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
-
       lastDate: DateTime(2101),
     );
     if (picked != null) {
@@ -115,47 +114,40 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
     }
   }
 
-  void submitSchedule(BuildContext context) {
+  Future<void> submitSchedule(BuildContext context) async {
     // ignore: avoid_returning_null_for_void
     if (!_formKey.currentState!.validate()) return null;
     _formKey.currentState!.save();
-
-    // context.read<ScheduleBloc>().add(FetchApiEvent());
-    // setState(() {
-    //   _isLoading = true;
-    // });
+    setState(() {
+      _isLoading = true;
+    });
     try {
-      BlocProvider.of<SaveapiBloc>(context).add(SaveApiEvent(
+      BlocProvider.of<SaveapiBloc>(context, listen: false).add(SaveApiEvent(
           date: dateFormated!,
           endtime: finalEndTime!,
           name: _name!,
           starttime: finalStartTime!));
-      // context.read<SaveapiBloc>().add(
-      //       (SaveApiEvent(
-      //           date: dateFormated!,
-      //           endtime: finalEndTime!,
-      //           name: _name!,
-      //           starttime: finalStartTime!)),
-      //     );
-      log("save successful");
-      //?loading the data again
-      Future.delayed(const Duration(milliseconds: 200)).then((value) {
-        // context.read<ScheduleBloc>().add(FetchApiEvent());
-        log("before delayed api fetch");
-        BlocProvider.of<ScheduleBloc>(context).add(FetchApiEvent());
-      });
-      log("after  delayed api fetch");
 
-      // setState(() {
-      //   _isLoading = false;
-      // });
+      await Future.delayed(const Duration(milliseconds: 1000));
+
+      if (BlocProvider.of<SaveapiBloc>(context, listen: false).state.isError) {
+        setState(() {
+          _isLoading = false;
+        });
+        return alertDialog(context);
+      }
+
+      BlocProvider.of<ScheduleBloc>(context, listen: false)
+          .add(FetchApiEvent());
+      setState(() {
+        _isLoading = false;
+      });
       Navigator.pop(context);
     } catch (e) {
-      log(e.toString());
-      log("endOfError0");
-      // setState(() {
-      //   _isLoading = false;
-      // });
+      setState(() {
+        _isLoading = false;
+      });
+
       alertDialog(context);
     }
   }
@@ -227,7 +219,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                       onpressed: () {
                         _selectTime(context, true);
                       }),
-                  const customDivider(),
+                  const CustomDivider(),
                   DateAndTime(
                       title: "End Time",
                       // ignore: unnecessary_null_comparison
@@ -237,7 +229,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                       onpressed: () {
                         _selectTime(context, false);
                       }),
-                  const customDivider(),
+                  const CustomDivider(),
                   DateAndTime(
                       title: "Date",
                       value: dateFormated!,
@@ -249,70 +241,16 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
             ),
             const SizedBox(height: 15),
 
-            // ignore: prefer_const_constructors
             _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : CustomBtn(
                     title: "Add Schedule",
                     onpressed: () {
                       submitSchedule(context);
-                      // alertDialog(context);
-                      //  fsdf();
-                      //  convertingTime(selectedStartTime, selectedEndTime);
                     },
                   )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class customDivider extends StatelessWidget {
-  const customDivider({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Divider(
-      thickness: 1.5,
-      endIndent: 20,
-      indent: 20,
-    );
-  }
-}
-
-class DateAndTime extends StatelessWidget {
-  final Function()? onpressed;
-  final String title;
-  final String value;
-
-  // ignore: use_key_in_widget_constructors
-  const DateAndTime({this.onpressed, required this.title, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: Theme.of(context).primaryTextTheme.headline6),
-          InkWell(
-            onTap: onpressed,
-            child: Row(
-              children: [
-                Text(value,
-                    style: Theme.of(context)
-                        .primaryTextTheme
-                        .headline6!
-                        .merge(TextStyle(color: _colors.blueSecondayColor))),
-                const Icon(Icons.arrow_forward_ios)
-              ],
-            ),
-          )
-        ],
       ),
     );
   }
