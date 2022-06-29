@@ -21,24 +21,22 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       emit(ScheduleState(isApifeching: false, schedulelist: data));
     });
 
-    on<SaveApiEvent>((event, emit) async {
-      try {
-        emit(ScheduleState(
-          isApifeching: true,
-        ));
-        log("savemessage1");
+    // on<SaveApiEvent>((event, emit) async {
+    //   try {
+    //     emit(ScheduleState(
+    //       isApifeching: true,
+    //     ));
+    //     log("savemessage1");
 
-        await ScheduleApi.createSchedules(
-            event.name, event.date, event.starttime, event.endtime);
-        // log("message1");
-        // final data = await ScheduleApi.fetchSchedules();
-        log("savemessage2");
-        emit(ScheduleState(isApifeching: false));
-      } catch (e) {
-        emit(ScheduleState(isApifeching: false));
+    //     await ScheduleApi.createSchedules(
+    //         event.name, event.date, event.starttime, event.endtime);
 
-        throw e;
-      }
-    });
+    //     log("savemessage2");
+    //     emit(ScheduleState(isApifeching: false));
+    //   } catch (e) {
+    //     log("error in bloc");
+    //     emit(ScheduleState(isApifeching: false));
+    //   }
+    // });
   }
 }

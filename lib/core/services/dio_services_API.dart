@@ -154,3 +154,58 @@ class DioAPIServices extends BaseAPIConfig {
     throw UnimplementedError();
   }
 }
+
+
+
+  // @override
+  // Future<Map> postAPI({
+  //   Map<String, String>? addOnHeader,
+  //   Map<String, dynamic>? body,
+  //   required String url,
+  //   String? authorization,
+  // }) async {
+  //   final _responseBody = await _bodyPassRequest(
+  //     methodType: 'POST',
+  //     url: url,
+  //     authorization: authorization,
+  //     body: body,
+  //   );
+
+  //   return _responseBody;
+  // }
+
+  // Future<Map> _bodyPassRequest({
+  //   Map<String, dynamic>? body,
+  //   String? authorization,
+  //   required String url,
+  //   required String methodType,
+  // }) async {
+  //   try {
+  //     // body json encoding
+  //     dynamic _encodeJson = json.encode(body);
+  //     if (body == null) _encodeJson = null;
+
+  //     Dio _dio = Dio(_options);
+
+  //     // for json accept and content type
+  //     _dio.options.headers['content-Type'] = 'application/json';
+  //     _dio.options.headers['Accept'] = 'application/json';
+
+  //     //? for jwt authorization
+  //     if (authorization != null)
+  //       _dio.options.headers['authorization'] = '$authorization';
+
+  //     // api response
+  //     Response _response = await _dio
+  //         .request(url, options: Options(method: methodType), data: _encodeJson)
+  //         .catchError((e) {
+  //       throw HttpException(500);
+  //     });
+
+  //     _errorHandler(_response);
+
+  //     return _response.data;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }

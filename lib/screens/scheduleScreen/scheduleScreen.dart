@@ -123,9 +123,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       // else {
                       return ListView.builder(
                         // ignore: prefer_if_null_operators
-                        itemCount: state.schedulelist!.length,
+                        itemCount: state.schedulelist?.length,
                         itemBuilder: (ctx, i) {
-                          if (_selectedDate == state.schedulelist![i].date) {
+                          if (_selectedDate == state.schedulelist?[i].date) {
                             return PerdayScheduleListIem(
                               isFinalItem: i + 1 == state.schedulelist!.length
                                   ? true

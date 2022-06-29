@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:scheduleapp/screens/bottomsheet/widgets/scheduleOverlap.dart';
 import 'package:scheduleapp/widgets/customBtn.dart';
 import 'package:date_format/date_format.dart';
+import '../../core/bloc/savapi/saveapi_bloc.dart';
 import '../../core/bloc/schedule_bloc.dart';
 import '../../core/services/dependecyInjection.dart';
 import '../../core/themes/colors.dart';
@@ -114,7 +115,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
     }
   }
 
-  Future<void> submitSchedule(BuildContext context) async {
+  void submitSchedule(BuildContext context) {
     // ignore: avoid_returning_null_for_void
     if (!_formKey.currentState!.validate()) return null;
     _formKey.currentState!.save();
@@ -124,39 +125,40 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
     //   _isLoading = true;
     // });
     try {
-      context.read<ScheduleBloc>().add(
-            (SaveApiEvent(
-                date: dateFormated!,
-                endtime: finalEndTime!,
-                name: _name!,
-                starttime: finalStartTime!)),
-          );
-//?loading the data again
-      context.read<ScheduleBloc>().add(FetchApiEvent());
+      BlocProvider.of<SaveapiBloc>(context).add(SaveApiEvent(
+          date: dateFormated!,
+          endtime: finalEndTime!,
+          name: _name!,
+          starttime: finalStartTime!));
+      // context.read<SaveapiBloc>().add(
+      //       (SaveApiEvent(
+      //           date: dateFormated!,
+      //           endtime: finalEndTime!,
+      //           name: _name!,
+      //           starttime: finalStartTime!)),
+      //     );
+      log("save successful");
+      //?loading the data again
+      Future.delayed(const Duration(milliseconds: 200)).then((value) {
+        // context.read<ScheduleBloc>().add(FetchApiEvent());
+        log("before delayed api fetch");
+        BlocProvider.of<ScheduleBloc>(context).add(FetchApiEvent());
+      });
+      log("after  delayed api fetch");
+
       // setState(() {
       //   _isLoading = false;
       // });
       Navigator.pop(context);
     } catch (e) {
       log(e.toString());
+      log("endOfError0");
       // setState(() {
       //   _isLoading = false;
       // });
       alertDialog(context);
     }
   }
-
-  // void fsdf() {
-  //   var scs = TimeOfDay.now().format(context);
-  //   var s1 = scs.split(":").first;
-  //   var s2 = scs.split(":").last;
-  //   var s3 = s2.split(" ").first;
-  //   print(TimeOfDay.now().hour);
-  //   print(TimeOfDay.now().minute);
-  //   print(s1);
-  //   print(s2);
-  //   print(s3);
-  // }
 
   @override
   Widget build(BuildContext context) {

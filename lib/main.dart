@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scheduleapp/core/bloc/savapi/saveapi_bloc.dart';
 import 'package:scheduleapp/core/bloc/schedule_bloc.dart';
 import 'package:scheduleapp/screens/scheduleScreen/scheduleScreen.dart';
 
@@ -26,8 +27,12 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    return BlocProvider(
-        create: (context) => ScheduleBloc(),
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<ScheduleBloc>(create: (context) => ScheduleBloc()),
+          BlocProvider<SaveapiBloc>(create: (context) => SaveapiBloc()),
+        ],
+        // create: (context) => ScheduleBloc(),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Schedule app',

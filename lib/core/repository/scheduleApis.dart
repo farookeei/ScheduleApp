@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:scheduleapp/core/error/http_exception.dart';
 import 'package:scheduleapp/core/model/scheduleModel.dart';
 import 'package:scheduleapp/core/services/dependecyInjection.dart';
+import 'dart:convert';
 
 import '../services/dio_services_API.dart';
 import 'package:dio/dio.dart';
@@ -30,32 +31,32 @@ class ScheduleApi {
   static Future<void> createSchedules(
       String name, String date, String starttime, String endtime) async {
     try {
-      final _fetchData = _dioAPIServices.postAPI(
-          url: "https://alpha.classaccess.io/api/challenge/v1/save/schedule",
-          body: {
-            "name": name,
-            "startTime": starttime,
-            "endTime": endtime,
-            "date": date
-          });
-
-      // final Response response = await Dio(BaseOptions()).post(
-      //     "https://alpha.classaccess.io/api/challenge/v1/save/schedule",
-      //     options: Options(contentType: "application/json"),
-      //     data: {
+      // final _fetchData = _dioAPIServices.postAPI(
+      //     url: "https://alpha.classaccess.io/api/challenge/v1/save/schedule",
+      //     body: {
       //       "name": name,
       //       "startTime": starttime,
       //       "endTime": endtime,
       //       "date": date
       //     });
 
-      // if (response.data is Map) {
-      //   if (response.data.containsKey('errors'))
-      //     // ignore: curly_braces_in_flow_control_structures
-      //     throw HttpException(response.data['errors'][0], response.statusCode!);
-      // }
+      Map<String, dynamic> _body = {
+        "name": name,
+        "startTime": starttime,
+        "endTime": endtime,
+        "date": date
+      };
+      dynamic _encodeJson = json.encode(_body);
+      final Response response = await Dio(BaseOptions())
+          .post("https://alpha.classaccess.io/api/challenge/v1/save/schedule",
+              options: Options(contentType: "application/json"),
+              data: _encodeJson)
+          .catchError((e) => throw e);
     } catch (e) {
-      print(e);
+      // ignore: avoid_print
+      // print(e);
+      log("error occured");
+      // ignore: use_rethrow_when_possible
       throw e;
     }
   }
