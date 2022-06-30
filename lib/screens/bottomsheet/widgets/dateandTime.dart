@@ -8,9 +8,16 @@ class DateAndTime extends StatelessWidget {
   final Function()? onpressed;
   final String title;
   final String value;
+  final bool isTimeeValid;
+  final bool isDateWidget;
 
   // ignore: use_key_in_widget_constructors
-  const DateAndTime({this.onpressed, required this.title, required this.value});
+  const DateAndTime(
+      {this.onpressed,
+      required this.isTimeeValid,
+      required this.isDateWidget,
+      required this.title,
+      required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +36,20 @@ class DateAndTime extends StatelessWidget {
                         .primaryTextTheme
                         .headline6!
                         .merge(TextStyle(color: _colors.blueSecondayColor))),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 18,
-                )
+                !isDateWidget
+                    ? isTimeeValid
+                        ? const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 18,
+                          )
+                        : const Icon(
+                            Icons.warning,
+                            size: 18,
+                          )
+                    : const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 18,
+                      )
               ],
             ),
           )

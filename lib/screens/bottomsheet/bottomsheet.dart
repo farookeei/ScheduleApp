@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:scheduleapp/core/model/scheduleModel.dart';
 import 'package:scheduleapp/screens/bottomsheet/widgets/dateandTime.dart';
 import 'package:scheduleapp/screens/bottomsheet/widgets/scheduleOverlap.dart';
 import 'package:scheduleapp/widgets/customBtn.dart';
@@ -30,6 +33,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
   String? dateFormated;
   String? _name;
   bool _isLoading = false;
+  bool _isTimeValid = true;
 
   String? finalStartTime;
   String? finalEndTime;
@@ -114,10 +118,69 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
     }
   }
 
+  TimeOfDay stringToTimeOfDay(String s) {
+    TimeOfDay _startTime = TimeOfDay(
+        hour: int.parse(s.split(":")[0]), minute: int.parse(s.split(":")[1]));
+    return _startTime;
+  }
+
+  bool timedifference() {
+    TimeOfDay a = selectedStartTime;
+    int firstTime = a.hour * 60 + a.minute;
+
+    TimeOfDay b = selectedEndTime;
+    int secondTime = b.hour * 60 + b.minute;
+
+    if (firstTime < secondTime) {
+      setState(() {
+        _isTimeValid = true;
+      });
+      return true;
+    }
+    return false;
+  }
+
+//* checking whether a point of time comes within a time range
+  bool isValidTimeRange(
+      TimeOfDay startTime, TimeOfDay endTime, TimeOfDay comparesTo) {
+    TimeOfDay now = comparesTo;
+    return ((now.hour > startTime.hour) ||
+            (now.hour == startTime.hour && now.minute >= startTime.minute)) &&
+        ((now.hour < endTime.hour) ||
+            (now.hour == endTime.hour && now.minute <= endTime.minute));
+  }
+
   Future<void> submitSchedule(BuildContext context) async {
-    // ignore: avoid_returning_null_for_void
-    if (!_formKey.currentState!.validate()) return null;
+    if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
+
+    //* checking whether the start time is less than endtime
+    bool isTimeCorrect = timedifference();
+    if (!isTimeCorrect) {
+      setState(() {
+        _isTimeValid = false;
+      });
+      return;
+    }
+
+    List<ScheduleModel>? _scheduleModel = [];
+    _scheduleModel = BlocProvider.of<ScheduleBloc>(context, listen: false)
+        .state
+        .schedulelist;
+    for (int i = 0; i < _scheduleModel!.length; i++) {
+      if (_scheduleModel[i].date == dateFormated) {
+        bool a = isValidTimeRange(selectedStartTime, selectedEndTime,
+            stringToTimeOfDay(_scheduleModel[i].startTime));
+        bool b = isValidTimeRange(selectedStartTime, selectedEndTime,
+            stringToTimeOfDay(_scheduleModel[i].endTime));
+
+        if (a || b) {
+          return alertDialog(context);
+        }
+      }
+      i++;
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -215,6 +278,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 children: [
                   DateAndTime(
                       title: "Start Time",
+                      isDateWidget: false,
+                      isTimeeValid: _isTimeValid,
                       value: selectedStartTime.format(context),
                       onpressed: () {
                         _selectTime(context, true);
@@ -222,6 +287,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                   const CustomDivider(),
                   DateAndTime(
                       title: "End Time",
+                      isDateWidget: false,
+                      isTimeeValid: _isTimeValid,
                       // ignore: unnecessary_null_comparison
                       value: selectedEndTime == null
                           ? ""
@@ -232,6 +299,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                   const CustomDivider(),
                   DateAndTime(
                       title: "Date",
+                      isDateWidget: true,
+                      isTimeeValid: _isTimeValid,
                       value: dateFormated!,
                       onpressed: () {
                         _selectDate(context);
