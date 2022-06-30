@@ -41,7 +41,7 @@ class PerdayScheduleListIem extends StatelessWidget {
                           child: DottedLine(
                             direction: Axis.vertical,
                             lineLength: 70,
-                            lineThickness: 4.0,
+                            lineThickness: 2.0,
                             dashLength: 5.0,
                             dashColor: Colors.black,
                             // dashGradient: [Colors.red, Colors.blue],
@@ -54,7 +54,7 @@ class PerdayScheduleListIem extends StatelessWidget {
                         ),
                   Container(
                     margin: const EdgeInsets.only(right: 10),
-                    height: 100,
+                    height: 90,
                     width: 70,
                     decoration: BoxDecoration(
                         color: _colors.lightblueColor,

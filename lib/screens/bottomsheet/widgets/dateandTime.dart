@@ -15,7 +15,7 @@ class DateAndTime extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -29,7 +29,10 @@ class DateAndTime extends StatelessWidget {
                         .primaryTextTheme
                         .headline6!
                         .merge(TextStyle(color: _colors.blueSecondayColor))),
-                const Icon(Icons.arrow_forward_ios)
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 18,
+                )
               ],
             ),
           )

@@ -248,7 +248,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                     onpressed: () {
                       submitSchedule(context);
                     },
-                  )
+                  ),
+            const SizedBox(height: 15),
           ],
         ),
       ),
